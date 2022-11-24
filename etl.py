@@ -9,12 +9,21 @@ from psycopg2.extensions import register_adapter, AsIs
 from datetime import datetime
 
 def addapt_numpy_float64(numpy_float64):
+    """
+    psycopg recognizes float64
+    """
     return AsIs(numpy_float64)
 
 def addapt_numpy_int64(numpy_int64):
+    """
+    psycopg recognizes int64
+    """
     return AsIs(numpy_int64)
 
 def addapt_numpy_array(numpy_array):
+    """
+    psycopg recognizes numpy_array
+    """
     return AsIs(tuple(numpy_array))
 
 register_adapter(np.ndarray, addapt_numpy_array)
@@ -23,8 +32,9 @@ register_adapter(np.int64, addapt_numpy_int64)
 
 
 def process_song_file(cur, conn, filepath):
-    
-    # Get files
+    """
+    Get files from songs, then create songs and artists dataframes, finally inserts it into sparkify database.
+    """
     df_song_files = []
     files = get_files(filepath)
     for file in files:
@@ -48,6 +58,9 @@ def process_song_file(cur, conn, filepath):
 
 
 def split_date(row):
+    """
+    From timestamp it calculates hour, day, month, so on. 
+    """
     date = datetime.fromtimestamp(row['ts']/1000.0)
     row['ts'] = row['ts']/1000.0
     row['hour'] = date.hour
@@ -59,7 +72,9 @@ def split_date(row):
     return row
 
 def process_log_file(cur, conn, filepath):
-    
+    """
+    Get files from logs, then create users and songplays dataframes, finally inserts it into sparkify database.
+    """
     # Get files
     df_log_files = []
     files = get_files(filepath)
@@ -84,7 +99,7 @@ def process_log_file(cur, conn, filepath):
     conn.commit()
 
     # load user table
-    user_df = df[['userId', 'firstName', 'lastName', 'gender', 'level']]
+    user_df = df[['userId', 'firstName', 'lastName', 'gender', 'level', 'level']]
     user_df['userId'] = user_df['userId'].astype(int)
     user_df.drop_duplicates(subset=['userId'], inplace=True)
 
@@ -118,6 +133,9 @@ def process_log_file(cur, conn, filepath):
     conn.commit()
 
 def get_files(filepath):
+    """
+    Returl all paths in a folder
+    """
     all_files = []
     for root, dirs, files in os.walk(filepath):
         files = glob.glob(os.path.join(root,'*.json'))
@@ -127,6 +145,9 @@ def get_files(filepath):
     return all_files
 
 def main():
+    """
+    Main function process log data and song data
+    """
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
