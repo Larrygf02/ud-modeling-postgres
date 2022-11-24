@@ -7,9 +7,9 @@ Fact Table: songplays
 
 # Files in project
 
-create_tables.py => Creates the database with dimensional and fact tables
-data => Contains the information to process
-etl.py => Extract the information then transform it data into tables, finally insert into database
+- create_tables.py => Creates the database with dimensional and fact tables
+- data => Contains the information to process
+- etl.py => Extract the information then transform it data into tables, finally insert into database
 
 # How to run files
 
